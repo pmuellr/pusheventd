@@ -1,0 +1,22 @@
+{
+    "name":                 "pusheventd",
+    "main":                 "./lib/main",
+    "description":          "server that converts POST request to server events",
+    "author":               "pmuellr",
+    "version":              "0.1.0",
+    "homepage":             "https://github.com/pmuellr/pusheventd",
+    "repository":           {"type": "git", "url": "git://github.com/pmuellr/pusheventd" },
+    "dependencies": {
+        "concat-stream":    "1.4.x",
+        "express":          "3.4.x",
+        "nopt":             "2.1.x",
+        "q":                "1.0.x",
+        "underscore":       "1.6.x"
+    },
+    "devDependencies": {
+        "eventsource":      "0.0.x",
+        "expect.js":        "0.2.x",
+        "mocha":            "1.17.x",
+        "coffee-script":    "1.7.x"
+    }
+}
