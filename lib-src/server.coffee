@@ -54,6 +54,9 @@ module.exports = class Server
 
         clearInterval @interval
 
+        for puller in @pullers
+            puller.response.end()
+
         return
 
     #---------------------------------------------------------------------------
@@ -103,9 +106,11 @@ module.exports = class Server
         @pullers.push puller
 
         response.writeHead 200,
-            "Content-Type": "text/event-stream"
+            "Content-Type":     "text/event-stream"
+            "Cache-Control":    "no-cache"
+            "Connection":       "keep-alive"
 
-        response.write ": just opened!\n\n"
+        response.write ":ok\n\n"
 
         # remove puller when it stops listening
         response.on "close", =>

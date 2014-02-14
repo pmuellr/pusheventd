@@ -6,6 +6,9 @@ http = require "http"
 expect      = require "expect.js"
 EventSource = require "eventsource"
 
+EventSourceOpts =
+    rejectUnauthorized: false
+
 main = require ".."
 
 port = null
@@ -16,7 +19,7 @@ describe "server", ->
 
     #----------------------------------
     before (done) ->
-        p = main.start(verbose: true)
+        p = main.start verbose: false
         p.then (s) ->
             server = s
             port = server.port
@@ -29,11 +32,12 @@ describe "server", ->
 
     #----------------------------------
     after (done) ->
-        console.log "-> after()"
+        # @timeout 10000
         p = server.stop()
-        p.then -> done()
-        p.fail (error) -> done error
-        p.done()
+        done()
+        # p.then -> done()
+        # p.fail (error) -> done error
+        # p.done()
 
     #----------------------------------
     it "should handle a push", (done) ->
@@ -43,7 +47,7 @@ describe "server", ->
 
     #----------------------------------
     it "should handle a pull", (done) ->
-        es = new EventSource("http://localhost:#{port}/events/foo2")
+        es = new EventSource "http://localhost:#{port}/events/foo2", EventSourceOpts
         es.onopen = (event) ->
             console.log "eventsource: open ",  event
             pushEvent "PUT", "foo2", "barbar"
@@ -52,9 +56,10 @@ describe "server", ->
             console.log "eventsource: error ", event
 
         es.onmessage = (event) ->
-            console.log "eventsource: message ", event
-            expect(event?.data?.body).to.be "barbar"
-            expect(event?.data?.method).to.be "PUT"
+            data = JSON.parse event.data
+            expect(data?.body).to.be "barbar"
+            expect(data?.method).to.be "PUT"
+            es.close()
             done()
 
 #-------------------------------------------------------------------------------
